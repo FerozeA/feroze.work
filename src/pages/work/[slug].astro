@@ -1,0 +1,31 @@
+---
+import Base from '../../layouts/Base.astro';
+import Crumbs from '../../components/Crumbs.astro';
+import { allWork } from '../../lib/content.js';
+
+export function getStaticPaths() {
+  return allWork.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = project;
+const media = project.media ?? [];
+---
+<Base title={project.title}>
+  <Crumbs items={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work' }, { label: project.title }]} />
+  <h1 class="title">{project.title}</h1>
+  {project.date && <p class="date">{project.date}</p>}
+  <div class="prose"><Content /></div>
+  {media.length > 0 && (
+    <div class="media">
+      {media.map((m) => (
+        <figure>
+          {/\.(mp4|webm)$/i.test(m.src)
+            ? <video src={m.src} controls muted loop playsinline></video>
+            : <img src={m.src} alt={m.alt ?? project.title} loading="lazy" />}
+          {m.caption && <figcaption>{m.caption}</figcaption>}
+        </figure>
+      ))}
+    </div>
+  )}
+</Base>

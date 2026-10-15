@@ -1,0 +1,152 @@
+/* Tokens extracted from the Framer site. See the Feroze Ali design system. */
+:root {
+  --paper: #ffffff;
+  --ink: #000000;
+  --text: #666666;
+  --muted: #919191;
+  --hairline: #e6e6e6;
+  --tile: #f4f4f4;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --space-10: 10px;
+  --space-16: 16px;
+  --space-26: 26px;
+  --space-40: 40px;
+  --column: 630px;
+
+  --radius-sm: 7px;
+  --radius-md: 8px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--muted); text-decoration: none; transition: color .2s ease; }
+a:hover { color: var(--ink); }
+
+.page {
+  max-width: calc(var(--column) + 32px);
+  margin: 0 auto;
+  padding: 142px 16px 120px;
+  animation: rise .6s ease both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 640px) {
+  .page { padding-top: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page { animation: none; }
+  * { transition: none !important; }
+}
+
+/* Breadcrumb */
+.crumbs { display: flex; gap: 8px; align-items: center; margin: 0 0 var(--space-26); font-size: 16px; }
+.crumbs span[aria-hidden] { color: var(--muted); }
+.crumbs [aria-current] { color: var(--ink); }
+
+/* Headings */
+h1, h2, h3 { color: var(--ink); font-weight: 500; letter-spacing: 0.02em; line-height: 1.2; }
+.title { font-size: 16px; font-weight: 600; margin: 0 0 6px; }
+.date { margin: 0 0 var(--space-26); color: var(--muted); font-size: 14px; letter-spacing: 0.05em; font-weight: 500; }
+
+/* Section label with hairline, as on the original site */
+.label {
+  display: flex; gap: 8px; align-items: baseline;
+  margin: 0 0 var(--space-16); padding: 0 0 10px 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink); font-size: 16px; font-weight: 500; letter-spacing: 0.02em;
+}
+.label small { color: var(--text); font-size: 16px; font-weight: 400; }
+.section { margin: var(--space-40) 0 0; }
+
+/* Prose */
+.prose p { margin: 0 0 20px; }
+.prose h2 { font-size: 16px; margin: 40px 0 10px; }
+.prose a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--hairline); }
+.prose a:hover { text-decoration-color: var(--ink); }
+.prose blockquote { margin: 28px 0 0; padding: 0 0 0 16px; border-left: 1px solid var(--hairline); font-size: 14px; }
+.prose blockquote p { margin: 0 0 8px; }
+
+/* Tile grid */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-16); }
+@media (max-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+.tile { transition: transform .35s cubic-bezier(.2,.7,.2,1), opacity .3s ease; display: block; position: relative; aspect-ratio: 180 / 148; overflow: hidden; background: var(--tile); }
+.tile img, .tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tile .name {
+  position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 10px;
+  font-size: 12px; line-height: 1.3; letter-spacing: 0.02em; color: var(--text);
+  opacity: 1; transition: opacity .25s ease;
+}
+.tile.has-media .name { opacity: 0; color: #fff; background: linear-gradient(transparent 40%, rgba(0,0,0,.55)); }
+.tile.has-media:hover .name { opacity: 1; }
+.tile:hover { color: var(--ink); }
+
+/* Library list */
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { border-bottom: 1px solid var(--hairline); }
+.list a, .list .row {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 16px; padding: 12px 0;
+  font-size: 15px; color: var(--ink);
+}
+.list .meta { color: var(--muted); font-size: 13px; letter-spacing: 0.05em; min-width: 5.5em; text-align: right; }
+.list .draft { color: var(--muted); }
+.list a:hover { color: var(--muted); }
+
+/* Media on project pages */
+.media { display: grid; gap: var(--space-16); margin: var(--space-40) 0 0; }
+.media figure { margin: 0; }
+.media img, .media video { width: 100%; height: auto; display: block; }
+.media figcaption { margin-top: 8px; text-align: center; font-size: 12px; font-style: italic; font-weight: 300; color: var(--text); }
+
+/* Footer used on blog posts */
+.postnote { margin-top: var(--space-40); padding-top: 20px; border-top: 1px solid var(--hairline); font-size: 14px; }
+.postnote ol { margin: 8px 0 12px; padding-left: 20px; }
+
+.home-intro p { margin: 0 0 20px; }
+.home-intro p:first-child { color: var(--ink); font-weight: 500; letter-spacing: 0.02em; }
+.home-intro a { color: var(--muted); }
+
+.notfound { display: flex; min-height: 70vh; align-items: center; justify-content: center; }
+.notfound a { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 700; font-size: 23px; color: var(--ink); text-decoration: underline; }
+
+/* Fixed top fade: same color as the page so content appears to dissolve as it scrolls up */
+.topfade {
+  position: fixed; top: 0; left: 0; right: 0; height: 74px; z-index: 10; pointer-events: none;
+  background: linear-gradient(to bottom, var(--paper) 0%, var(--paper) 35%, transparent 100%);
+}
+
+/* Section label that links to the full list: grey pill appears behind the text on hover */
+.label-link { text-decoration: none; }
+.label-link .pill-text { position: relative; display: inline-flex; gap: 8px; align-items: baseline; z-index: 0; }
+.label-link .pill-text::before {
+  content: ''; position: absolute; z-index: -1; inset: -4px -12px;
+  border-radius: 999px; background: var(--tile);
+  opacity: 0; transform: scale(.94); transition: opacity .2s ease, transform .2s ease;
+}
+.label-link:hover .pill-text::before, .label-link:focus-visible .pill-text::before { opacity: 1; transform: none; }
+
+/* Hovering a tile enlarges it slightly and dims its siblings */
+@media (hover: hover) {
+  .grid:has(.tile:hover) .tile:not(:hover),
+  .grid:has(.tile:focus-visible) .tile:not(:focus-visible) { opacity: .4; }
+  .tile:hover, .tile:focus-visible { transform: scale(1.04); z-index: 1; }
+}

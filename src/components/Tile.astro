@@ -1,0 +1,11 @@
+---
+// A project tile. Add `thumb` to the project's frontmatter (a path under /public) to show an image.
+const { project } = Astro.props;
+const thumb = project.thumb;
+const isVideo = thumb && /\.(mp4|webm)$/i.test(thumb);
+---
+<a class:list={['tile', { 'has-media': !!thumb }]} href={`/work/${project.slug}`}>
+  {thumb && !isVideo && <img src={thumb} alt={project.title} loading="lazy" />}
+  {thumb && isVideo && <video src={thumb} muted loop playsinline autoplay></video>}
+  <span class="name">{project.title}</span>
+</a>

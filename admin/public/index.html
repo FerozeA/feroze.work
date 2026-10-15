@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>feroze.work admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#fff; --ink:#000; --text:#666; --muted:#919191; --line:#e6e6e6; --tile:#f4f4f4; --danger:#b3261e; --ok:#1a7f37; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; font: 14px/1.5 Inter, system-ui, sans-serif; color: var(--text); background: var(--paper); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: var(--ink); }
+  .app { display: grid; grid-template-columns: 280px 1fr; height: 100%; }
+  aside { border-right: 1px solid var(--line); overflow: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 18px; }
+  main { overflow: auto; padding: 28px 36px 80px; }
+  h1 { font-size: 15px; margin: 0; color: var(--ink); font-weight: 600; letter-spacing: .02em; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 500; margin: 0 0 6px; display: flex; justify-content: space-between; align-items: center; }
+  .group { display: flex; flex-direction: column; gap: 1px; }
+  .item { text-align: left; background: none; border: 0; padding: 6px 8px; border-radius: 6px; cursor: pointer; color: var(--text); display: flex; justify-content: space-between; gap: 8px; }
+  .item:hover { background: var(--tile); }
+  .item.active { background: var(--tile); color: var(--ink); font-weight: 500; }
+  .item small { color: var(--muted); }
+  .tag { font-size: 11px; color: var(--muted); }
+  .btn { border: 1px solid var(--line); background: var(--paper); border-radius: 999px; padding: 6px 14px; cursor: pointer; color: var(--ink); }
+  .btn:hover { background: var(--tile); }
+  .btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .btn.primary:hover { opacity: .85; }
+  .btn.danger { color: var(--danger); }
+  .btn.sm { padding: 2px 10px; font-size: 12px; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 200px; }
+  .field.narrow { flex: 0 0 110px; }
+  label { font-size: 12px; color: var(--muted); }
+  input[type=text], input[type=number], select, textarea { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--paper); width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid #00000022; border-color: var(--ink); }
+  textarea { min-height: 360px; resize: vertical; line-height: 1.6; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+  .check { display: flex; gap: 6px; align-items: center; padding-bottom: 9px; color: var(--ink); }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+  .bar h1 { font-size: 20px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; max-width: 820px; }
+  .panel { border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .drop { border: 1px dashed var(--muted); border-radius: 10px; padding: 18px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { background: var(--tile); border-color: var(--ink); color: var(--ink); }
+  .files { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 12px; }
+  .file { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+  .file .thumb { aspect-ratio: 4/3; background: var(--tile); display: grid; place-items: center; color: var(--muted); font-size: 12px; overflow: hidden; }
+  .file .thumb img, .file .thumb video { width: 100%; height: 100%; object-fit: cover; }
+  .file .meta { padding: 8px; display: flex; flex-direction: column; gap: 6px; font-size: 12px; }
+  .file .name { color: var(--ink); overflow-wrap: anywhere; }
+  .file .ctl { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .file input[type=text] { padding: 4px 8px; font-size: 12px; }
+  .toast { position: fixed; right: 20px; bottom: 20px; background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 10px; opacity: 0; transform: translateY(8px); transition: .25s; pointer-events: none; max-width: 360px; white-space: pre-wrap; }
+  .toast.show { opacity: 1; transform: none; }
+  .toast.err { background: var(--danger); }
+  pre { background: var(--tile); border-radius: 8px; padding: 10px; overflow: auto; font-size: 12px; margin: 8px 0 0; white-space: pre-wrap; }
+  .dirty { color: var(--danger); font-size: 12px; }
+  .empty { color: var(--muted); }
+  @media (max-width: 800px) { .app { grid-template-columns: 1fr; height: auto; } aside { border-right: 0; border-bottom: 1px solid var(--line); max-height: 45vh; } main { padding: 20px 16px 80px; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <h1>feroze.work</h1>
+      <a id="viewSite" href="#" target="_blank" rel="noopener" class="tag">View site ↗</a>
+    </div>
+    <div class="group"><button class="item" data-open="home">Home intro</button></div>
+    <div id="nav" class="stack" style="gap:18px"></div>
+    <div class="panel" id="publish">
+      <h2>Publish</h2>
+      <div id="gitState" class="tag">Checking…</div>
+      <input type="text" id="commitMsg" value="Update content" style="margin-top:8px">
+      <button class="btn primary" id="publishBtn" style="margin-top:8px;width:100%">Publish changes</button>
+      <pre id="publishLog" hidden></pre>
+    </div>
+  </aside>
+  <main id="main"><p class="empty">Pick something on the left, or add a new project or post.</p></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === 'class') n.className = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else if (v === true) n.setAttribute(k, ''); else if (v !== false && v != null) n.setAttribute(k, v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(k));
+  return n;
+};
+const api = async (path, opts = {}) => {
+  const res = await fetch('/api' + path, { ...opts, headers: { 'X-Admin': '1', ...(opts.json ? { 'Content-Type': 'application/json' } : {}), ...opts.headers }, body: opts.json ? JSON.stringify(opts.json) : opts.body });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || res.statusText);
+  return data;
+};
+let toastTimer;
+const toast = (msg, err) => { const t = $('#toast'); t.textContent = msg; t.className = 'toast show' + (err ? ' err' : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.className = 'toast', err ? 5000 : 2200); };
+const fmtSize = (n) => n > 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+const isVideo = (s) => /\.(mp4|webm|mov)$/i.test(s);
+const isImage = (s) => /\.(jpe?g|png|gif|webp|avif|svg)$/i.test(s);
+const slugify = (s) => s.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60);
+
+let entries = { work: [], library: [] }, current = null, dirty = false, sitePort = 4321;
+const CATS = [['experiments', 'Experiments'], ['experience', 'Experience'], ['projects', 'Projects']];
+
+async function refreshNav() {
+  entries = await api('/entries');
+  const nav = $('#nav'); nav.replaceChildren();
+  const section = (title, type, items, category) => el('div', {},
+    el('h2', {}, title, el('button', { class: 'btn sm', onclick: () => openEntry(type, null, category) }, '+ New')),
+    el('div', { class: 'group' }, items.map((e) => el('button', { class: 'item' + (current && current.type === type && current.slug === e.slug ? ' active' : ''), onclick: () => openEntry(type, e.slug) },
+      el('span', {}, e.title), e.draft ? el('small', {}, 'draft') : e.featured ? el('small', {}, '★') : null))));
+  for (const [id, label] of CATS) nav.append(section(label, 'work', entries.work.filter((e) => e.category === id), id));
+  nav.append(section('Library', 'library', [...entries.library.filter((e) => e.draft), ...entries.library.filter((e) => !e.draft)]));
+}
+async function refreshGit() {
+  const g = await api('/git');
+  $('#gitState').textContent = !g.repo ? 'Not a git repo yet. Run git init and add a remote to publish from here.' : g.changes.length ? `${g.changes.length} changed file${g.changes.length > 1 ? 's' : ''}${g.remote ? '' : ' (no remote set)'}` : 'Everything is published.';
+  $('#publishBtn').disabled = !g.repo || !g.changes.length;
+}
+function setDirty(v) { dirty = v; const d = $('#dirty'); if (d) d.textContent = v ? 'Unsaved changes' : ''; }
+window.addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+
+async function openEntry(type, slug, category) {
+  if (dirty && !confirm('Discard unsaved changes?')) return;
+  setDirty(false);
+  if (type === 'home') { current = { type }; return renderHome(); }
+  if (!slug) { current = { type, slug: null }; renderEditor(type, { slug: '', data: type === 'work' ? { category: category || 'experience', order: (entries.work.length + 1), media: [] } : { order: entries.library.length + 1 }, body: '', files: [] }, true); return refreshNav(); }
+  const entry = await api(`/entry/${type}/${slug}`);
+  current = { type, slug };
+  renderEditor(type, entry, false); refreshNav();
+}
+
+async function renderHome() {
+  const { body } = await api('/home');
+  const ta = el('textarea', { id: 'homeBody', oninput: () => setDirty(true), style: 'min-height:420px' }); ta.value = body;
+  $('#main').replaceChildren(el('div', { class: 'stack' },
+    el('div', { class: 'bar' }, el('h1', {}, 'Home intro'), el('div', { class: 'row' }, el('span', { class: 'dirty', id: 'dirty' }),
+      el('button', { class: 'btn primary', onclick: async () => { await api('/home', { method: 'PUT', json: { body: ta.value } }); setDirty(false); toast('Saved'); refreshGit(); } }, 'Save'))),
+    el('p', { class: 'tag' }, 'Markdown. The first paragraph is shown as your name. Links: [text](https://example.com).'), ta));
+  refreshNav();
+}
+
+function renderEditor(type, entry, isNew) {
+  const d = { ...entry.data }; d.media = (d.media || []).map((m) => ({ ...m }));
+  let files = entry.files.slice();
+  const f = {}; // field elements
+  const text = (key, label, opts = {}) => { f[key] = el('input', { type: 'text', value: d[key] ?? '', placeholder: opts.ph || '', oninput: () => setDirty(true) }); return el('div', { class: 'field ' + (opts.cls || '') }, el('label', {}, label), f[key]); };
+  const num = (key, label) => { f[key] = el('input', { type: 'number', value: d[key] ?? '', oninput: () => setDirty(true) }); return el('div', { class: 'field narrow' }, el('label', {}, label), f[key]); };
+  const check = (key, label) => { f[key] = el('input', { type: 'checkbox', checked: !!d[key], onchange: () => setDirty(true) }); return el('label', { class: 'check' }, f[key], label); };
+
+  f.slug = el('input', { type: 'text', value: entry.slug, disabled: !isNew, placeholder: 'url_name' });
+  f.title = el('input', { type: 'text', value: d.title ?? '', oninput: () => { setDirty(true); if (isNew && !f.slug.dataset.touched) f.slug.value = slugify(f.title.value); } });
+  f.slug.addEventListener('input', () => { f.slug.dataset.touched = '1'; setDirty(true); });
+  f.body = el('textarea', { oninput: () => setDirty(true) }); f.body.value = entry.body;
+  if (type === 'work') f.category = el('select', { onchange: () => setDirty(true) }, CATS.map(([v, l]) => el('option', { value: v, selected: d.category === v }, l)));
+
+  const top = el('div', { class: 'row' },
+    el('div', { class: 'field' }, el('label', {}, 'Title'), f.title),
+    el('div', { class: 'field' }, el('label', {}, 'URL name (' + (type === 'work' ? '/work/' : '/library/') + '…)'), f.slug));
+  const meta = type === 'work'
+    ? el('div', { class: 'row' }, text('date', 'Date (shown under the title)', { ph: '12 May 2026' }), el('div', { class: 'field narrow' }, el('label', {}, 'Category'), f.category), num('order', 'Order'), check('featured', 'Show on home'))
+    : el('div', { class: 'row' }, text('date', 'Date', { ph: '19 April 2026' }), text('short', 'Short date (list)', { ph: '19/04', cls: 'narrow' }), text('tag', 'Tag', { ph: 'Thoughts' }), num('order', 'Order'), check('draft', 'Draft (no page, listed first)'));
+  const footer = type === 'library' ? text('footer', 'Footer topic (adds the "why an engineer is writing about …" note; leave empty for none)') : null;
+
+  // ----- media panel -----
+  const mediaBox = el('div', {});
+  const slugNow = () => (isNew ? f.slug.value.trim() : entry.slug);
+  const renderMedia = () => {
+    mediaBox.replaceChildren();
+    const grid = el('div', { class: 'files' });
+    const onPage = (src) => d.media.findIndex((m) => m.src === src);
+    for (const file of files) {
+      const idx = onPage(file.src);
+      const preview = isVideo(file.src) ? el('video', { src: file.src, muted: true, preload: 'metadata' }) : isImage(file.src) ? el('img', { src: file.src, loading: 'lazy' }) : el('span', {}, 'file');
+      const ctl = [];
+      if (type === 'work') {
+        ctl.push(el('label', { class: 'check', style: 'padding:0' }, el('input', { type: 'checkbox', checked: idx > -1, onchange: (e) => { if (e.target.checked) d.media.push({ src: file.src }); else d.media.splice(onPage(file.src), 1); setDirty(true); renderMedia(); } }), 'On page'));
+        ctl.push(el('label', { class: 'check', style: 'padding:0' }, el('input', { type: 'radio', name: 'thumb', checked: d.thumb === file.src, onchange: () => { d.thumb = file.src; setDirty(true); } }), 'Tile image'));
+      } else {
+        ctl.push(el('button', { class: 'btn sm', onclick: () => { navigator.clipboard.writeText(`![${file.name}](${file.src})`); toast('Markdown copied'); } }, 'Copy markdown'));
+      }
+      ctl.push(el('button', { class: 'btn sm danger', onclick: async () => {
+        if (!confirm(`Remove ${file.name}? It moves to the .trash folder.`)) return;
+        await api(`/media/${slugNow()}/${file.name}`, { method: 'DELETE' });
+        d.media = d.media.filter((m) => m.src !== file.src); if (d.thumb === file.src) delete d.thumb;
+        files = files.filter((x) => x !== file); renderMedia(); refreshGit(); setDirty(true);
+      } }, 'Delete'));
+      const cap = type === 'work' && idx > -1 ? el('input', { type: 'text', placeholder: 'Caption', value: d.media[idx].caption || '', oninput: (e) => { d.media[idx].caption = e.target.value; setDirty(true); } }) : null;
+      const move = type === 'work' && idx > -1 ? el('span', { class: 'ctl' }, `#${idx + 1}`,
+        el('button', { class: 'btn sm', disabled: idx === 0, onclick: () => { [d.media[idx - 1], d.media[idx]] = [d.media[idx], d.media[idx - 1]]; setDirty(true); renderMedia(); } }, '↑'),
+        el('button', { class: 'btn sm', disabled: idx === d.media.length - 1, onclick: () => { [d.media[idx + 1], d.media[idx]] = [d.media[idx], d.media[idx + 1]]; setDirty(true); renderMedia(); } }, '↓')) : null;
+      grid.append(el('div', { class: 'file' }, el('div', { class: 'thumb' }, preview), el('div', { class: 'meta' }, el('span', { class: 'name' }, file.name, ' ', el('span', { class: 'tag' }, fmtSize(file.size))), el('div', { class: 'ctl' }, ctl), move, cap)));
+    }
+    const missing = d.media.filter((m) => !files.some((x) => x.src === m.src));
+    const drop = el('div', { class: 'drop' }, 'Drop images or videos here, or click to choose');
+    const input = el('input', { type: 'file', multiple: true, hidden: true, accept: 'image/*,video/mp4,video/webm,video/quicktime,application/pdf' });
+    const upload = async (list) => {
+      const slug = slugNow();
+      if (!/^[a-z0-9][a-z0-9_-]*$/.test(slug)) return toast('Set a URL name above before uploading', true);
+      for (const file of list) {
+        try {
+          drop.textContent = `Uploading ${file.name}…`;
+          const r = await api(`/media/${slug}?name=${encodeURIComponent(file.name)}`, { method: 'POST', body: file });
+          files.push(r);
+          if (type === 'work') { d.media.push({ src: r.src }); if (!d.thumb) d.thumb = r.src; setDirty(true); }
+        } catch (e) { toast(`${file.name}: ${e.message}`, true); }
+      }
+      renderMedia(); refreshGit();
+    };
+    drop.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => upload([...input.files]));
+    drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+    drop.addEventListener('drop', (e) => { e.preventDefault(); drop.classList.remove('over'); upload([...e.dataTransfer.files]); });
+    mediaBox.append(...[drop, input, files.length ? grid : el('p', { class: 'empty' }, 'No files yet.'),
+      missing.length ? el('p', { class: 'dirty' }, `Page references missing files: ${missing.map((m) => m.src).join(', ')}`) : null].filter(Boolean));
+  };
+  renderMedia();
+
+  const save = async () => {
+    const slug = slugNow();
+    if (!/^[a-z0-9][a-z0-9_-]*$/.test(slug)) return toast('URL name: lowercase letters, numbers, - and _', true);
+    if (isNew && entries[type].some((e) => e.slug === slug)) return toast('That URL name is already used', true);
+    const out = { ...d };
+    for (const k of ['title', 'date', 'short', 'tag', 'footer']) if (f[k]) out[k] = f[k].value.trim();
+    if (f.category) out.category = f.category.value;
+    if (f.order) out.order = f.order.value === '' ? undefined : Number(f.order.value);
+    for (const k of ['featured', 'draft']) if (f[k]) out[k] = f[k].checked;
+    if (type === 'work') { if (!out.thumb) delete out.thumb; out.media = d.media; }
+    try {
+      const r = await api(`/entry/${type}/${slug}`, { method: 'PUT', json: { data: out, body: f.body.value } });
+      setDirty(false); toast('Saved'); current = { type, slug }; await refreshNav(); refreshGit();
+      renderEditor(type, r, false);
+    } catch (e) { toast(e.message, true); }
+  };
+  const del = async () => {
+    const withMedia = files.length && confirm(`Also move its ${files.length} media file(s) to the .trash folder?\nOK = delete media too, Cancel = keep the media files.`);
+    if (!confirm(`Delete "${entry.data.title}"? The page moves to the .trash folder and can be restored from there.`)) return;
+    await api(`/entry/${type}/${entry.slug}${withMedia ? '?media=1' : ''}`, { method: 'DELETE' });
+    setDirty(false); current = null; toast('Deleted'); $('#main').replaceChildren(el('p', { class: 'empty' }, 'Deleted. It is in the .trash folder if you need it back.')); refreshNav(); refreshGit();
+  };
+  const viewHref = isNew ? null : `http://localhost:${sitePort}/${type}/${entry.slug}`;
+  $('#main').replaceChildren(el('div', { class: 'stack' },
+    el('div', { class: 'bar' }, el('h1', {}, isNew ? (type === 'work' ? 'New project' : 'New post') : entry.data.title),
+      el('div', { class: 'row', style: 'align-items:center' }, el('span', { class: 'dirty', id: 'dirty' }),
+        viewHref ? el('a', { href: viewHref, target: '_blank', rel: 'noopener', class: 'btn' }, 'View page ↗') : null,
+        isNew ? null : el('button', { class: 'btn danger', onclick: del }, 'Delete'),
+        el('button', { class: 'btn primary', onclick: save }, 'Save'))),
+    top, meta, footer,
+    el('div', { class: 'field' }, el('label', {}, 'Body (markdown)'), f.body),
+    el('div', {}, el('h2', {}, type === 'work' ? 'Media' : 'Files for this post'), mediaBox)));
+  window.__save = save;
+}
+
+window.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); window.__save && window.__save(); } });
+document.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openEntry(b.dataset.open); });
+$('#publishBtn').addEventListener('click', async () => {
+  const btn = $('#publishBtn'); btn.disabled = true; btn.textContent = 'Publishing…';
+  try { const r = await api('/publish', { method: 'POST', json: { message: $('#commitMsg').value } }); const log = $('#publishLog'); log.hidden = false; log.textContent = r.log; toast('Published'); }
+  catch (e) { const log = $('#publishLog'); log.hidden = false; log.textContent = e.message; toast('Publish failed', true); }
+  btn.textContent = 'Publish changes'; refreshGit();
+});
+
+(async () => {
+  try { sitePort = (await api('/config')).sitePort; } catch {}
+  $('#viewSite').href = `http://localhost:${sitePort}`;
+  await refreshNav(); await refreshGit();
+})();
+</script>
+</body>
+</html>
