@@ -7,6 +7,7 @@ export default defineCliConfig({
   },
   studioHost: 'feroze-work',
   deployment: {
+    appId: 'i2x3oud4wi1uhcpq1v73cg4i',
     autoUpdates: true,
   },
 })
