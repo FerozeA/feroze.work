@@ -1,17 +1,59 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Crumbs from '../../components/Crumbs.astro';
 import Tile from '../../components/Tile.astro';
 import { categories, workByCategory } from '../../lib/content.js';
+const thumbOf = (w) => (w.cover?.type === 'image' ? w.cover.srcset.split(', ')[0]?.split(' ')[0] || w.cover.src : '');
 ---
-<Base title="Work">
-  <Crumbs items={[{ label: 'Home', href: '/' }, { label: 'Work' }]} />
-  {categories.map((c) => (
-    <section class="section">
-      <h2 class="label">{c.label}</h2>
-      <div class="grid">
-        {workByCategory(c.id).map((w) => <Tile project={w} />)}
-      </div>
-    </section>
-  ))}
+<Base title="Work" back={{ href: '/', label: 'home' }}>
+  <div class="work-head" data-enter>
+    <h2 class="section-title">Work</h2>
+    <div class="seg" role="radiogroup" aria-label="Layout" data-seg>
+      <span class="seg-pill" aria-hidden="true"></span>
+      <button type="button" role="radio" aria-checked="true" data-view="grid">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="1.5" y="1.5" width="4.5" height="4.5" rx="1.2"/><rect x="8" y="1.5" width="4.5" height="4.5" rx="1.2"/><rect x="1.5" y="8" width="4.5" height="4.5" rx="1.2"/><rect x="8" y="8" width="4.5" height="4.5" rx="1.2"/></svg>
+        Grid
+      </button>
+      <button type="button" role="radio" aria-checked="false" data-view="list">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 3.5h10M2 7h10M2 10.5h10" fill="none" stroke-width="1.4" stroke-linecap="round"/></svg>
+        List
+      </button>
+    </div>
+  </div>
+
+  <div class="views" data-views data-view="grid">
+    <div class="view view-grid">
+      {categories.map((c) => (
+        <section class="section" data-enter>
+          <h3 class="label">{c.label} <small>{workByCategory(c.id).length}</small></h3>
+          <div class="grid" data-grid>
+            {workByCategory(c.id).map((w) => <Tile project={w} />)}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="view view-list">
+      {categories.map((c) => (
+        <section class="section">
+          <h3 class="label">{c.label} <small>{workByCategory(c.id).length}</small></h3>
+          <div class="rows-wrap" data-hover-list>
+          <span class="rows-pill" aria-hidden="true"></span>
+          <ul class="rows">
+            {workByCategory(c.id).map((w) => (
+              <li>
+                <a class="row" href={`/work/${w.slug}`} data-peek={thumbOf(w)}>
+                  <span class="row-title">{w.title}</span>
+                  {w.summary && <span class="row-desc">{w.summary}</span>}
+                  <span class="row-date">{w.date}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          </div>
+        </section>
+      ))}
+    </div>
+  </div>
+
+  <div class="peek" aria-hidden="true" data-peek-card><img alt="" /></div>
 </Base>

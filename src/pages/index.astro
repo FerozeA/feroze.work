@@ -1,40 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
 import Tile from '../components/Tile.astro';
-import { allWork, featuredWork, allLibrary } from '../lib/content.js';
-import { Content as Intro } from '../content/home.md';
-const libraryList = [...allLibrary.filter((p) => p.draft), ...allLibrary.filter((p) => !p.draft)];
+import { site, listedWork, featuredWork } from '../lib/content.js';
 ---
 <Base>
-  <section class="home-intro">
-    <Intro />
-  </section>
+  <section class="intro" data-enter set:html={site.introHtml} />
 
-  <section class="section">
-    <a class="label label-link" href="/work" style="color: var(--ink)" aria-label={`See all ${allWork.length}+ projects`}>
-      <span class="pill-text">Work <small>{allWork.length}+</small></span>
-    </a>
-    <div class="grid">
+  <section class="section" data-enter>
+    <div class="section-head">
+      <h2 class="section-title">Selected work</h2>
+      <a class="more" href="/work">
+        <span>All {listedWork.length}</span>
+        <svg class="arrow" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 6h7M6.5 3l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="grid" data-grid>
       {featuredWork.map((w) => <Tile project={w} />)}
     </div>
-  </section>
-
-  <section class="section">
-    <h2 class="label">Library</h2>
-    <ul class="list">
-      {libraryList.map((p) => (
-        <li>
-          {p.draft ? (
-            <div class="row draft">
-              <span>{p.title}</span><span class="meta">Draft</span><span class="meta">{p.short}</span>
-            </div>
-          ) : (
-            <a href={`/library/${p.slug}`}>
-              <span>{p.title}</span><span class="meta">{p.tag}</span><span class="meta">{p.short}</span>
-            </a>
-          )}
-        </li>
-      ))}
-    </ul>
   </section>
 </Base>

@@ -1,0 +1,23 @@
+---
+// The name block at the top of every page. With `back`, it becomes a link: hovering rolls the
+// role line over to "← Back to …".
+import { site } from '../lib/content.js';
+const { back } = Astro.props;
+---
+{back ? (
+  <a class="identity is-link" href={back.href} data-enter>
+    <span class="identity-name">{site.name}</span>
+    <span class="roll" aria-hidden="true">
+      <span class="roll-inner">
+        <span>{site.role}</span>
+        <span>← Back to {back.label}</span>
+      </span>
+    </span>
+    <span class="sr-only">Back to {back.label}</span>
+  </a>
+) : (
+  <header class="identity" data-enter>
+    <h1 class="identity-name">{site.name}</h1>
+    <p class="identity-role">{site.role}</p>
+  </header>
+)}
