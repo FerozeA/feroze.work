@@ -1,25 +1,44 @@
 ---
 import '../styles/global.css';
-const { title, description = 'Syed Feroze Ali is a design engineer based in DC and New York.' } = Astro.props;
-const pageTitle = title ? `${title} | Feroze Ali` : 'Feroze Ali';
+import Identity from '../components/Identity.astro';
+import { site } from '../lib/content.js';
+// back: { href, label } turns the name block into a link back to that page.
+const { title, description = site.description, back } = Astro.props;
+const pageTitle = title ? `${title} | ${site.shortName}` : site.shortName;
 ---
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#111110" />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin />
+    <script is:inline>document.documentElement.classList.add("js")</script>
   </head>
   <body>
     <div class="topfade" aria-hidden="true"></div>
     <main class="page">
+      <Identity back={back} />
       <slot />
+      <footer class="foot" data-enter>
+        <span>© {new Date().getFullYear()} {site.shortName}</span>
+        <span class="foot-links">
+          <a class="ul" href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a class="ul" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <span class="clock" title="Local time in New York"><span class="dot" aria-hidden="true"></span><time data-clock>NYC</time></span>
+        </span>
+      </footer>
     </main>
+    <script>
+      import '../scripts/interactions.js';
+    </script>
   </body>
 </html>

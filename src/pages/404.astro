@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Not found">
-  <div class="notfound"><a href="/">Home</a></div>
+<Base title="Not found" back={{ href: '/', label: 'home' }}>
+  <div class="notfound" data-enter>
+    <p class="notfound-code">404</p>
+    <p>This page doesn't exist. <a class="ul" href="/">Head home</a> or browse <a class="ul" href="/work">the work</a>.</p>
+  </div>
 </Base>

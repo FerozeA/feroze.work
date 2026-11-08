@@ -1,31 +1,54 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Crumbs from '../../components/Crumbs.astro';
-import { allWork } from '../../lib/content.js';
+import Media from '../../components/Media.astro';
+import { allWork, listedWork } from '../../lib/content.js';
 
 export function getStaticPaths() {
   return allWork.map((project) => ({ params: { slug: project.slug }, props: { project } }));
 }
 
 const { project } = Astro.props;
-const { Content } = project;
-const media = project.media ?? [];
+// Previous / next follow the order on /work; unlisted (experiment) pages get no neighbours.
+const i = listedWork.findIndex((w) => w.slug === project.slug);
+const prev = i > 0 ? listedWork[i - 1] : null;
+const next = i >= 0 && i < listedWork.length - 1 ? listedWork[i + 1] : null;
 ---
-<Base title={project.title}>
-  <Crumbs items={[{ label: 'Home', href: '/' }, { label: 'Work', href: '/work' }, { label: project.title }]} />
-  <h1 class="title">{project.title}</h1>
-  {project.date && <p class="date">{project.date}</p>}
-  <div class="prose"><Content /></div>
-  {media.length > 0 && (
-    <div class="media">
-      {media.map((m) => (
-        <figure>
-          {/\.(mp4|webm)$/i.test(m.src)
-            ? <video src={m.src} controls muted loop playsinline></video>
-            : <img src={m.src} alt={m.alt ?? project.title} loading="lazy" />}
-          {m.caption && <figcaption>{m.caption}</figcaption>}
-        </figure>
-      ))}
-    </div>
+<Base title={project.title} back={{ href: '/work', label: 'work' }}>
+  <article>
+    <header class="post-head" data-enter>
+      <h2 class="post-title">{project.title}</h2>
+      {project.date && <p class="post-date">{project.date}</p>}
+    </header>
+    <div class="prose" data-enter set:html={project.bodyHtml} />
+
+    {project.media.length > 0 && (
+      <div class="media" data-enter>
+        {project.media.map((m) => (
+          <figure>
+            <Media item={m} controls zoom />
+            {m.caption && <figcaption>{m.caption}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    )}
+  </article>
+
+  {(prev || next) && (
+    <nav class="pager" aria-label="More work" data-enter>
+      {prev ? (
+        <a class="pager-link prev" href={`/work/${prev.slug}`}>
+          <span class="pager-dir">Previous</span>
+          <span class="pager-title">{prev.title}</span>
+        </a>
+      ) : <span></span>}
+      {next && (
+        <a class="pager-link next" href={`/work/${next.slug}`}>
+          <span class="pager-dir">Next</span>
+          <span class="pager-title">{next.title}</span>
+        </a>
+      )}
+    </nav>
   )}
+
+  <dialog class="zoom" data-zoom-dialog aria-label="Image viewer"></dialog>
 </Base>

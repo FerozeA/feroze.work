@@ -1,0 +1,24 @@
+---
+// One image or video. Images blur up from their placeholder; videos play on hover (or when in view
+// on touch screens) unless `controls` is set.
+const { item, sizes = '(max-width: 680px) 100vw, 630px', eager = false, controls = false, zoom = false } = Astro.props;
+---
+{item.type === 'video' ? (
+  controls
+    ? <video class="vid" src={item.src} controls muted loop playsinline preload="metadata"></video>
+    : <video class="vid" src={item.src} muted loop playsinline preload="metadata" data-hoverplay aria-label={item.alt}></video>
+) : (
+  <span class="blur" style={item.blur ? `background-image:url(${item.blur})` : undefined}>
+    <img
+      src={item.src}
+      srcset={item.srcset || undefined}
+      sizes={item.srcset ? sizes : undefined}
+      width={item.w}
+      height={item.h}
+      alt={item.alt}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      data-zoom={zoom ? '' : undefined}
+    />
+  </span>
+)}
