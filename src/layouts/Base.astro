@@ -30,11 +30,6 @@ const pageTitle = title ? `${title} | ${site.shortName}` : site.shortName;
       <slot />
       <footer class="foot" data-enter>
         <span>© {new Date().getFullYear()} {site.shortName}</span>
-        <span class="foot-links">
-          <a class="ul" href={site.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
-          <a class="ul" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <span class="clock" title="Local time in New York"><span class="dot" aria-hidden="true"></span><time data-clock>NYC</time></span>
-        </span>
       </footer>
     </main>
     <script>

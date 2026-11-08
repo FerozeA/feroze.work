@@ -167,12 +167,3 @@ if (dialog && typeof dialog.showModal === 'function') {
   dialog.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
   addEventListener('scroll', () => { if (dialog.open) close(); }, { passive: true });
 }
-
-// Live clock in the footer.
-const clock = document.querySelector('[data-clock]');
-if (clock) {
-  const fmt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit' });
-  const update = () => { clock.textContent = `${fmt.format(new Date())} in New York`; };
-  update();
-  setInterval(update, 15_000);
-}

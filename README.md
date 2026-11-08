@@ -16,7 +16,7 @@ npm run studio   # Sanity Studio at http://localhost:3333 (run `npm install` in 
 | `src/lib/content.js` | The one Sanity query, plus how images, videos and rich text become HTML |
 | `src/pages/` | Home, Work index (grid / list), project pages, 404, `/jrvrn` |
 | `src/components/` | `Identity` (name block / back link), `Tile`, `Media` |
-| `src/scripts/interactions.js` | All the client-side details: hover pill, cursor preview, view switch, image zoom, video hover-play, blur-up, clock |
+| `src/scripts/interactions.js` | All the client-side details: hover pill, cursor preview, view switch, image zoom, video hover-play, blur-up |
 | `src/styles/global.css` | Colour and motion tokens at the top, then every style |
 | `studio/` | The Sanity Studio (schemas in `studio/schemaTypes`) |
 
